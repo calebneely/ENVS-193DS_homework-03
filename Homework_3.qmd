@@ -1,0 +1,71 @@
+---
+title: "Homework 3"
+author: "Caleb Neely"
+format: pdf
+---
+
+### Set up
+```{r setup, include=FALSE}
+# load package
+library(tidyverse)
+library(rstatix)
+
+# read in dataset
+temp_kelp <- read.csv("temp-kelp.csv")
+```
+
+## Problem 1
+
+### a) An Appropriate Test
+
+To determine the strength of the relationship between ocean temperature (°C) and giant kelp frond elongation rate (cm day<sup>-1</sup>), appropriate tests would be a **Pearson correlation** and a **Spearman rank correlation**. Pearson correlation measures the strength and direction of a **linear relationship** between the two continuous variables, while Spearman rank correlation measures the strength and direction of a **monotonic relationship** based on ranked data and is less sensitive to non-normal data and outliers.
+
+### b) Visualization
+
+```{r}
+ggplot(temp_kelp, 
+       aes(x = temp_c, 
+           y = kelp_elong)
+       ) +
+
+  geom_point(
+    color = "darkgreen",
+    size = 1
+  ) +
+
+  geom_smooth(
+    method = "lm",
+    se = TRUE,
+    color = "steelblue"
+  ) +
+
+  labs(
+    x = "Ocean temperature (°C)",
+    y = expression("Giant kelp elongation rate (cm day"^-1*")"),
+    title = "Relationship between ocean temperature and giant kelp growth"
+  ) +
+
+  theme_bw()
+```
+
+
+### c) Check Assumptions And Run Test
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

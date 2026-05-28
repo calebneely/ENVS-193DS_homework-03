@@ -18,15 +18,13 @@ temp_kelp <- read.csv("temp-kelp.csv")
 
 ### a) An Appropriate Test
 
-To determine the strength of the relationship between ocean temperature (°C) and giant kelp frond elongation rate (cm day<sup>-1</sup>), appropriate tests would be a **Pearson correlation** and a **Spearman rank correlation**. Pearson correlation measures the strength and direction of a **linear relationship** between the two continuous variables, while Spearman rank correlation measures the strength and direction of a **monotonic relationship** based on ranked data and is less sensitive to non-normal data and outliers.
+To determine the strength of the relationship between ocean temperature (°C) and giant kelp frond elongation rate (cm day<sup>-1</sup>), appropriate tests would be a **simple linear regression** and a **Pearson correlation**. Simple linear regression evaluates whether ocean temperature can predict giant kelp elongation rate and estimates how much elongation rate changes with temperature, while Pearson correlation measures the strength and direction of the linear relationship between the two continuous variables.
+
 
 ### b) Visualization
 
 ```{r}
-ggplot(temp_kelp, 
-       aes(x = temp_c, 
-           y = kelp_elong)
-       ) +
+ggplot(temp_kelp, aes(x = temp_c, y = kelp_elong)) +
 
   geom_point(
     color = "darkgreen",
@@ -51,21 +49,85 @@ ggplot(temp_kelp,
 
 ### c) Check Assumptions And Run Test
 
+#### Assumption Checks
+
+```{r}
+# visualize relationship to check linearity and outliers
+
+ggplot(temp_kelp, aes(x = temp_c, y = kelp_elong)) +
+
+  geom_point(
+    color = "darkgreen",
+    size = 1
+  ) +
+
+  geom_smooth(
+    method = "lm",
+    se = TRUE,
+    color = "steelblue"
+  ) +
+
+  labs(
+    x = "Ocean temperature (°C)",
+    y = expression("Giant kelp elongation rate (cm day"^-1*")")
+  ) +
+
+  theme_bw()
+```
+
+```{r}
+# check normality of variables
+
+temp_kelp %>%
+  shapiro_test(temp_c, kelp_elong)
+```
+
+```{r}
+# create linear model
+
+kelp_lm <- lm(kelp_elong ~ temp_c, data = temp_kelp)
+
+# check residual normality
+
+shapiro_test(residuals(kelp_lm))
+```
 
 
+I checked the assumptions of linearity, normality, and outliers for the linear regression model and Pearson correlation test. I checked linearity and potential outliers using a scatterplot with a fitted regression line, and I checked normality using Shapiro-Wilk tests from `rstatix` on both variables and the regression residuals. The assumptions appeared reasonably met because the relationship looked linear and the residuals were approximately normally distributed.
+
+#### Run Test
+
+```{r}
+# run linear regression model
+
+kelp_lm <- lm(kelp_elong ~ temp_c, data = temp_kelp)
+
+summary(kelp_lm)
+```
+
+### d) Results communication
+
+To evaluate the relationship between ocean temperature and giant kelp frond elongation rate, I used a **simple linear regression** because I wanted to determine whether ocean temperature could predict changes in giant kelp growth rate.
+
+The linear regression showed a significant negative relationship between ocean temperature and giant kelp elongation rate \((p = 0.0000137)\). This indicates that giant kelp frond elongation rate decreased as ocean temperature increased, suggesting that warmer ocean conditions may negatively affect giant kelp growth.
 
 
+### e) Test implications
 
+I would communicate to the team that ocean temperature appears to have a significant negative relationship with giant kelp frond elongation rate, meaning kelp growth decreased as temperature increased. This suggests that warming ocean conditions associated with climate change could negatively affect giant kelp productivity and overall kelp forest health, which may have broader impacts on the marine ecosystems that depend on kelp forests.
 
+### f) Run Other Test
 
+```{r}
+# Pearson correlation test
 
+temp_kelp %>%
+  cor_test(
+    temp_c,
+    kelp_elong,
+    method = "pearson"
+  )
+```
 
-
-
-
-
-
-
-
-
+The simple linear regression and Pearson correlation would lead to the same decision about the null hypothesis because both evaluate the strength of the linear relationship between ocean temperature and giant kelp elongation rate. However, linear regression estimates how much elongation rate changes with temperature, while Pearson correlation specifically measures the strength and direction of the linear association between the two continuous variables. In this case, both tests indicate that giant kelp elongation rate decreases as ocean temperature increases.
 
